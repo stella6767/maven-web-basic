@@ -7,6 +7,7 @@ import servlet.config.anno.RequestMapping;
 import servlet.domain.user.User;
 import servlet.domain.user.dto.LoginDto;
 import servlet.service.UserService;
+import servlet.utills.Script;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,11 +30,15 @@ public class UserController {
 
 
     @RequestMapping(uri = "/user/save")
-    public String join(LoginDto dto, HttpServletResponse response) {
+    public String join(LoginDto dto,HttpServletResponse response) throws IOException {
         System.out.println("join 함수 요청됨");
         System.out.println(dto);
 
         System.out.println("!!!!1"  + response);
+        //Script.responseData(response, "성공응답!!");
+
+        response.sendRedirect("board/list.jsp");
+
         return "/";
     }
 
@@ -41,7 +46,7 @@ public class UserController {
 
     @RequestMapping(uri = "/user/login")
     public String login(LoginDto dto) {
-        System.out.println("join 함수 요청됨");
+        System.out.println("login 함수 요청됨");
         System.out.println(dto);
         return "/";
     }

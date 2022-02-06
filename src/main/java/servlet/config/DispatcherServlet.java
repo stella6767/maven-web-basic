@@ -69,6 +69,7 @@ public class DispatcherServlet extends HttpServlet {
 
                         for (Method method : methods) {
 
+
                             RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
                             //System.out.println("requestMapping " + requestMapping);
 
@@ -89,10 +90,34 @@ public class DispatcherServlet extends HttpServlet {
 
                                     if (params.length > 0){
                                         //loginDto
-                                        Object parameInstance = params[0].getType().getConstructor().newInstance();
-                                        System.out.println("parameInstance " + parameInstance);
-                                        setData(parameInstance, req);
-                                        path = (String) method.invoke(controllerInstance, parameInstance);
+
+                                        Object parameInstance= null;
+
+                                        Object[] parameters = {new Object(), new Object()};
+
+                                        int i = 0;
+
+                                        for (Parameter param : params) {
+
+                                            if (param.getType().equals(HttpServletResponse.class)){
+                                                setData(resp, req);
+
+                                                //parameInstance= resp;
+
+                                                parameters[i] = resp;
+                                            }else{
+                                                parameInstance = param.getType().getConstructor(String.class, String.class)
+                                                        .newInstance(req.getParameter("name"), req.getParameter("password"));
+                                                System.out.println("parameInstance " + parameInstance);
+
+                                                setData(parameInstance, req);
+
+                                                parameters[i] = parameInstance;
+                                            }
+                                            i++;
+
+                                        }
+                                        path = (String) method.invoke(controllerInstance, parameters);
 
                                     }else {
                                         path = (String) method.invoke(controllerInstance);
@@ -100,9 +125,9 @@ public class DispatcherServlet extends HttpServlet {
                                     }
 
 
-                                    System.out.println("path : " + path);
-                                    RequestDispatcher dis = req.getRequestDispatcher(path);
-                                    dis.forward(req, resp);
+                                   // System.out.println("path : " + path);
+                                    //RequestDispatcher dis = req.getRequestDispatcher(path);
+                                    //dis.forward(req, resp);
                                     break; // 더 이상 메서드를 리플렉션 할 필요 없어서 빠져나감.
 
 
@@ -150,6 +175,8 @@ public class DispatcherServlet extends HttpServlet {
             for (Method method : methods) {
                 if(method.getName().equals(methodKey)) {
                     try {
+
+                        System.out.println("???? " +request.getParameter(key));
                         method.invoke(instance, request.getParameter(key));
                     } catch (Exception e) {
                         e.printStackTrace();
