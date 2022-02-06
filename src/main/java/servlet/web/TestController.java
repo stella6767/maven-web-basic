@@ -114,7 +114,7 @@ public class TestController extends HttpServlet {
             //resp.sendRedirect("board/test.jsp");
         }else if(cmd.equals("board")){
 
-            //resp.sendRedirect("board/detail.jsp");
+            //resp.sendRedirect("board/joinform.jsp");
 
             //프론트 컨트롤러 패턴.
             //라우팅 하는 역할을 담당하는( 앞단에서) 클래스를 만든 거에요. Controller.

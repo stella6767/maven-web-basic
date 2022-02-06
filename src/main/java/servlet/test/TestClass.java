@@ -1,8 +1,10 @@
 package servlet.test;
 
 import org.testng.annotations.Test;
-import servlet.domain.Board;
-import servlet.domain.BoardDao;
+import servlet.config.MConnectionMaker;
+import servlet.domain.board.Board;
+import servlet.domain.board.BoardDao;
+import servlet.domain.board.dto.BoardReqDto;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,8 +15,8 @@ public class TestClass {
 
 
     @Test
-    public void findAllTest(){
-        BoardDao boardDao = new BoardDao();
+    public void findAllTest() throws SQLException, ClassNotFoundException {
+        BoardDao boardDao = new BoardDao(new MConnectionMaker());
 
         List<Board> boards = boardDao.findAll();
 
@@ -25,15 +27,11 @@ public class TestClass {
 
 
     @Test
-    public void saveTest(){
+    public void saveTest() throws SQLException, ClassNotFoundException {
 
-        BoardDao boardDao = new BoardDao();
+        BoardDao boardDao = new BoardDao(new MConnectionMaker());
 
-        Board board = Board.builder()
-                .title("test3")
-                .content("content")
-                .build();
-        int result = boardDao.save(board);
+        int result = boardDao.save(new BoardReqDto("tesdfs", "sdfsdffss"));
         System.out.println(result);
 
     }

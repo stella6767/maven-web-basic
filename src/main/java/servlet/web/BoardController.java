@@ -1,22 +1,20 @@
 package servlet.web;
 
-import com.google.gson.Gson;
-import servlet.domain.Board;
+import lombok.SneakyThrows;
 import servlet.domain.user.User;
 import servlet.service.BoardService;
+import servlet.service.UserService;
 import servlet.utills.Script;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.List;
+import java.sql.SQLException;
 
 @WebServlet("/board")
 public class BoardController extends HttpServlet {
@@ -48,26 +46,20 @@ public class BoardController extends HttpServlet {
      *
      *  web.xml
      *       * -ServletContext의 초기 파라미터
-     *      *
      *      * -Session의 유효시간 설정
-     *      *
      *      * -Servlet/JSP에 대한 정의
-     *      *
      *      * -Servlet/JSP 매핑
-     *      *
      *      * -Mime Type 매핑
-     *      *
      *      * -Welcome File list
-     *      *
      *      * -Error Pages 처리
-     *      *
      *      * -리스너/필터 설정
-     *      *
      *      * -보안
-     *      *
      */
 
 
+
+
+    @SneakyThrows
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doProcess(req, resp);
@@ -75,85 +67,40 @@ public class BoardController extends HttpServlet {
     }
 
 
+    @SneakyThrows
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doProcess(req, resp);
     }
 
-    protected void doProcess(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    protected void doProcess(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException, SQLException, ClassNotFoundException {
 
-        Gson gson = new Gson();
         BoardService boardService = new BoardService();
-
         String cmd = req.getParameter("cmd");
 
-       // page scoope < request scope < session scope < application scope
 
-        ServletContext servletContext = req.getServletContext();
-        servletContext.setAttribute("application", "hi!");
-
-        HttpSession session = req.getSession();
-
+        //하나의 클래스는 하나의 책임만. SRP
+        //하나의 클래스나, 메서드에서 모든 로직을 처리하다보면, 재앙.
+        //본인이 어떤 클래스나 메서드가 방대해진다.
 
 
         if (cmd == null){
-            resp.sendRedirect("board/detail.jsp");
-
+            resp.sendRedirect("board/joinform.jsp");
 
         }else if (cmd.equals("save")){
-
-            String title = req.getParameter("title");
-            String content = req.getParameter("content");
-
-            System.out.println("title  " + title + "content " + content );
-
-            Board board = Board.builder()
-                    .title(title)
-                    .content(content)
-                    .build();
-            boardService.save(board);
-
+            boardService.save(req.getParameter("title"), req.getParameter("content") );
             resp.sendRedirect("/board?cmd=list");
-
 
         }else if (cmd.equals("list")){
 
+            System.out.println("???");
 
-            List<Board> boards = boardService.findAll();
-
-            System.out.println("boards=>" + boards);
-            req.setAttribute("boards", boards);
-
-            session.setAttribute("boards", boards);
-
+            req.setAttribute("boards",boardService.findAll());
             RequestDispatcher rd = req.getRequestDispatcher("board/list.jsp");
             rd.forward(req,resp);
 
-
         }else if (cmd.equals("ajaxSave")){
-
-//            BufferedReader br = req.getReader();
-//            System.out.println("data " + br.readLine());
-            String jsonBody = Script.getBody(req);
-            System.out.println("jsonBody=>" + jsonBody);
-            Board board = gson.fromJson(jsonBody, Board.class);
-            System.out.println("자바 오브젝트로 역직렬화 =>" + board);
-            boardService.save(board);
-
-            List<Board> boards = boardService.findAll();
-            String jsonBoards = gson.toJson(boards);
-            Script.responseData(resp, jsonBoards);
-
-        }else if(cmd.equals("session")){
-
-            //login
-            //USer user = userDao.finByID()
-
-            session.setAttribute("principal", new User("홍길동"));
-
-
-
-            resp.sendRedirect("board/session.jsp");
+            Script.responseData(resp, boardService.ajaxSaveAndFindAll(req));
         }
 
 

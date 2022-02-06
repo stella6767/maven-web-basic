@@ -43,6 +43,9 @@
     <div class="board-box"></div>
 
 
+    <a href="/board?cmd=list">게시글 리스트</a>
+
+
 <script src="/js/board.js"></script>
 </body>
 </html>

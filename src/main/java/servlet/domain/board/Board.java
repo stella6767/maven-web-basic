@@ -1,4 +1,4 @@
-package servlet.domain;
+package servlet.domain.board;
 
 
 import lombok.AllArgsConstructor;

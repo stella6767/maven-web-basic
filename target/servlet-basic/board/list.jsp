@@ -28,15 +28,15 @@
     </c:forEach>
 
 
-
-    <div>${sessionScope.principal}</div>
-
-
     <a href="/board">게시글 입력</a>
 
 
-    <a href="/board?cmd=session">세션에 대해서 알아보자</a>
 
+    <div class="mt-5">
+     <div>${sessionScope.principal}</div>
+
+    <a href="/board?cmd=session">세션에 대해서 알아보자</a>
+    </div>
 
 
     <%--복잡한 연산은 보통 서블릿에서 처리를 하고, 뷰 단은 화면을 랜더링하는 데에면 역할을 분리시키기로 약속을 했잖아요
