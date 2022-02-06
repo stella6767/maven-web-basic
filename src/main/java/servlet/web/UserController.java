@@ -2,6 +2,8 @@ package servlet.web;
 
 
 import lombok.SneakyThrows;
+import servlet.config.anno.Controller;
+import servlet.config.anno.RequestMapping;
 import servlet.domain.user.User;
 import servlet.domain.user.dto.LoginDto;
 import servlet.service.UserService;
@@ -15,23 +17,38 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
-//@WebServlet("/user")
-public class UserController extends HttpServlet {
+@Controller
+public class UserController {
 
 
-    @SneakyThrows
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doProcess(req, resp);
+    @RequestMapping(uri = "/user/joinform")
+    public String joinForm() {
 
+        return "user/joinform.jsp";
     }
 
 
-    @SneakyThrows
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doProcess(req, resp);
+    @RequestMapping(uri = "/user/save")
+    public String join(LoginDto dto, HttpServletResponse response) {
+        System.out.println("join 함수 요청됨");
+        System.out.println(dto);
+
+        System.out.println("!!!!1"  + response);
+        return "/";
     }
+
+
+
+    @RequestMapping(uri = "/user/login")
+    public String login(LoginDto dto) {
+        System.out.println("join 함수 요청됨");
+        System.out.println(dto);
+        return "/";
+    }
+
+
+
+
 
     protected void doProcess(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException, SQLException, ClassNotFoundException {
 

@@ -5,13 +5,27 @@ import servlet.config.MConnectionMaker;
 import servlet.domain.board.Board;
 import servlet.domain.board.BoardDao;
 import servlet.domain.board.dto.BoardReqDto;
+import servlet.config.DispatcherServlet;
 
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
 public class TestClass {
+
+
+
+    @Test
+    public void componentScanTest(){
+
+        DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        //List<Class> classes = dispatcherServlet.componentScan();
+
+
+    }
 
 
     @Test
