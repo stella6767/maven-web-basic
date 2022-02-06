@@ -2,15 +2,18 @@ package servlet.web;
 
 import com.google.gson.Gson;
 import servlet.domain.Board;
+import servlet.domain.user.User;
 import servlet.service.BoardService;
 import servlet.utills.Script;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
@@ -22,13 +25,51 @@ public class BoardController extends HttpServlet {
     /**
      * 안내원 역할.
      *
+     * 기본적으로 http는 stateless
+     * 연결을 계속 유지하면 요청하는 사람이 많아질수록 서버의 부하가 증가하잖아요.
+     * 단점은 동일한 클라이언트가 다시 요청을 할 때, 서버입장에서는 클라가 동일한 클라인지를 모름
+     *
+     *  로그인하고 끝날때까지 쓰는 정보는 session 영역에 넣어요.( 가급적 인증정보만)
+     *  그러면 이런 의문점이 생기죠? 동일한 키 값인데 어떻게 클라들을 구별할 수 있나
+     *
+     *  세션영역은 클라이언트마다 따로 있는 게 아니라 하나가 있음.
+     *  세션 저장소 안에 제이세션 ID 별로 클라를 구별해서 저장.
+     *
+     *  하나의 브라우저당 1개의 session 객체가 생성됨.
+     *  즉, 같은 브라우저 내에서 요청되는 페이지들은 같은 객체를 공유하게 되는데, 이를 세션영역이라 함
+     *  세션이 종료되면 객체는 반환됩니다. 30분
+     *
+     *  클라이언트 서버 요청-> 서버 브라우저에 임의 값을 부여 응답 -> 이후에 들어오는
+     *  요청에 대해서 서버가 갖고 있는 브라우저의 정보와 비교를 해서 동일한 클라인지 판별
+     *
+     *  쿠키 vs 세션
+     *  쿠키는 문자열 값만 쿠키 내에서 저장할 수 있거든요, 세션은 오브젝트를 담을 수 있음.
+     *
+     *
+     *  web.xml
+     *       * -ServletContext의 초기 파라미터
+     *      *
+     *      * -Session의 유효시간 설정
+     *      *
+     *      * -Servlet/JSP에 대한 정의
+     *      *
+     *      * -Servlet/JSP 매핑
+     *      *
+     *      * -Mime Type 매핑
+     *      *
+     *      * -Welcome File list
+     *      *
+     *      * -Error Pages 처리
+     *      *
+     *      * -리스너/필터 설정
+     *      *
+     *      * -보안
+     *      *
      */
 
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        System.out.println("get 요청 옴");
         doProcess(req, resp);
 
     }
@@ -36,24 +77,30 @@ public class BoardController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("utf-8");
-        //System.out.println("post 요청 옴=>" + req.getParameter("title"));
         doProcess(req, resp);
     }
 
     protected void doProcess(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 
         Gson gson = new Gson();
-
-
-        resp.setContentType("text/html; charset=utf-8");
-
         BoardService boardService = new BoardService();
 
         String cmd = req.getParameter("cmd");
 
+       // page scoope < request scope < session scope < application scope
 
-        if (cmd != null && cmd.equals("save")){
+        ServletContext servletContext = req.getServletContext();
+        servletContext.setAttribute("application", "hi!");
+
+        HttpSession session = req.getSession();
+
+
+
+        if (cmd == null){
+            resp.sendRedirect("board/detail.jsp");
+
+
+        }else if (cmd.equals("save")){
 
             String title = req.getParameter("title");
             String content = req.getParameter("content");
@@ -69,7 +116,7 @@ public class BoardController extends HttpServlet {
             resp.sendRedirect("/board?cmd=list");
 
 
-        }else if (cmd != null && cmd.equals("list")){
+        }else if (cmd.equals("list")){
 
 
             List<Board> boards = boardService.findAll();
@@ -77,11 +124,13 @@ public class BoardController extends HttpServlet {
             System.out.println("boards=>" + boards);
             req.setAttribute("boards", boards);
 
+            session.setAttribute("boards", boards);
+
             RequestDispatcher rd = req.getRequestDispatcher("board/list.jsp");
             rd.forward(req,resp);
 
 
-        }else if (cmd != null && cmd.equals("ajaxSave")){
+        }else if (cmd.equals("ajaxSave")){
 
 //            BufferedReader br = req.getReader();
 //            System.out.println("data " + br.readLine());
@@ -95,13 +144,16 @@ public class BoardController extends HttpServlet {
             String jsonBoards = gson.toJson(boards);
             Script.responseData(resp, jsonBoards);
 
-        }
+        }else if(cmd.equals("session")){
+
+            //login
+            //USer user = userDao.finByID()
+
+            session.setAttribute("principal", new User("홍길동"));
 
 
 
-
-        else{
-            resp.sendRedirect("board/detail.jsp");
+            resp.sendRedirect("board/session.jsp");
         }
 
 

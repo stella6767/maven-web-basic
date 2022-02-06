@@ -46,7 +46,7 @@ $(".btn-board").click(function(){
 
         //버츄얼 돔. 자바스크립의 데이터와 HTml Dom을 연결시킬 수 있어요.
 
-
+        
 
     });
 

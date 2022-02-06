@@ -64,6 +64,7 @@ public class TestController extends HttpServlet {
      * 두번째는 http 프로토콜은 기본적으로 응용계층 프로토콜이라, 정보의 양이 꽤 있어요.
      *
      *
+     * 톰캣은 필터를 제공한다.
      *
      *
      */
