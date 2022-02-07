@@ -1,48 +1,29 @@
-package servlet.config;
+package servlet.filter;
 
-import lombok.SneakyThrows;
 import servlet.config.anno.Controller;
 import servlet.config.anno.RequestMapping;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-//@WebServlet("/*")
-public class DispatcherServlet extends HttpServlet {
+public class DispatcherServletFilter implements Filter {
 
-
-    @SneakyThrows
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        doProcess(req,resp);
-    }
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
 
-    @SneakyThrows
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        doProcess(req,resp);
-    }
-
-    protected void doProcess(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException, SQLException, ClassNotFoundException {
-
+        HttpServletRequest req = (HttpServletRequest) servletRequest;
+        HttpServletResponse resp = (HttpServletResponse) servletResponse;
 
         System.out.println("컨텍스트패스 : " + req.getContextPath()); // 프로젝트 시작주소
         System.out.println("식별자주소 : " + req.getRequestURI()); // 끝주소
@@ -128,7 +109,8 @@ public class DispatcherServlet extends HttpServlet {
                                     System.out.println("path : " + path);
                                     RequestDispatcher dis = req.getRequestDispatcher(path);
                                     dis.forward(req, resp);
-
+                                    //requestDispatch는 필터를 다시 안탄다.!!!
+                                    //requestdispather는 내부에서 실행되므로 필터를 안 탄다.
 
                                     break; // 더 이상 메서드를 리플렉션 할 필요 없어서 빠져나감.
 
@@ -155,6 +137,7 @@ public class DispatcherServlet extends HttpServlet {
         }
 
     }
+
 
     private String keyToMethodKey(String key) {
         String firstkey = key.substring(0, 1);
@@ -233,6 +216,4 @@ public class DispatcherServlet extends HttpServlet {
         }
         return controllerList;
     }
-
-
 }

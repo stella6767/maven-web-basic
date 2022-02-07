@@ -22,14 +22,14 @@ import java.sql.SQLException;
 public class UserController {
 
 
-    @RequestMapping(uri = "/user/joinform")
-    public String joinForm() {
+//    @RequestMapping(uri = "/user/joinform")
+//    public String joinForm() {
+//
+//        return "user/joinform.jsp";
+//    }
 
-        return "user/joinform.jsp";
-    }
 
-
-    @RequestMapping(uri = "/user/save")
+    @RequestMapping(uri = "/user/join")
     public String join(LoginDto dto,HttpServletResponse response) throws IOException {
         System.out.println("join 함수 요청됨");
         System.out.println(dto);
@@ -37,19 +37,17 @@ public class UserController {
         System.out.println("!!!!1"  + response);
         //Script.responseData(response, "성공응답!!");
 
-        response.sendRedirect("board/list.jsp");
-
-        return "/";
+        return "loginForm.jsp";
     }
 
 
 
-    @RequestMapping(uri = "/user/login")
-    public String login(LoginDto dto) {
-        System.out.println("login 함수 요청됨");
-        System.out.println(dto);
-        return "/";
-    }
+//    @RequestMapping(uri = "/user/login")
+//    public String login(LoginDto dto) {
+//        System.out.println("login 함수 요청됨");
+//        System.out.println(dto);
+//        return "/";
+//    }
 
 
 

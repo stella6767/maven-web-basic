@@ -18,23 +18,34 @@
   </welcome-file-list>
 
   <filter>
-    <filter-name>myFilter</filter-name>
-    <filter-class>servlet.filter.Myfilter</filter-class>
+    <filter-name>dispath</filter-name>
+    <filter-class>servlet.filter.DispatcherServletFilter</filter-class>
   </filter>
 
-  <filter>
-    <filter-name>charFilter</filter-name>
-    <filter-class>servlet.filter.CharsetFilter</filter-class>
-  </filter>
+<!--  <filter>-->
+<!--    <filter-name>myFilter</filter-name>-->
+<!--    <filter-class>servlet.filter.Myfilter</filter-class>-->
+<!--  </filter>-->
+
+<!--  <filter>-->
+<!--    <filter-name>charFilter</filter-name>-->
+<!--    <filter-class>servlet.filter.CharsetFilter</filter-class>-->
+<!--  </filter>-->
+
+<!--  <filter-mapping>-->
+<!--    <filter-name>myFilter</filter-name>-->
+<!--    <url-pattern>/*</url-pattern>-->
+<!--  </filter-mapping>-->
+
+
+<!--  <filter-mapping>-->
+<!--    <filter-name>charFilter</filter-name>-->
+<!--    <url-pattern>/*</url-pattern>-->
+<!--  </filter-mapping>-->
+
 
   <filter-mapping>
-    <filter-name>myFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-
-  <filter-mapping>
-    <filter-name>charFilter</filter-name>
+    <filter-name>dispath</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
