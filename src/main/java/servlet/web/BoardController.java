@@ -16,9 +16,8 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet("/board")
+//@WebServlet("/board")
 public class BoardController extends HttpServlet {
-
 
     /**
      * 안내원 역할.
@@ -85,7 +84,9 @@ public class BoardController extends HttpServlet {
 
 
         if (cmd == null){
-            resp.sendRedirect("board/joinform.jsp");
+
+
+            resp.sendRedirect("board/detail.jsp");
 
         }else if (cmd.equals("save")){
             boardService.save(req.getParameter("title"), req.getParameter("content") );
@@ -93,7 +94,6 @@ public class BoardController extends HttpServlet {
 
         }else if (cmd.equals("list")){
 
-            System.out.println("???");
 
             req.setAttribute("boards",boardService.findAll());
             RequestDispatcher rd = req.getRequestDispatcher("board/list.jsp");

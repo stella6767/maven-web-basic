@@ -1,6 +1,7 @@
 package servlet.web;
 
 import lombok.extern.slf4j.Slf4j;
+import servlet.config.anno.Controller;
 import servlet.utills.Script;
 
 import javax.servlet.RequestDispatcher;
@@ -13,27 +14,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 
-@WebServlet("/test")
-public class TestController extends HttpServlet {
+//@WebServlet("/test")
+@Controller
+public class TestController {
 
 
     private int num = 0;
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        System.out.println("get 요청 옴");
-        doProcess(req, resp);
-
-    }
-
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        System.out.println("post 요청 옴=>" + req.getParameter("title"));
-        doProcess(req, resp);
-    }
 
 
     /**
@@ -114,7 +101,7 @@ public class TestController extends HttpServlet {
             //resp.sendRedirect("board/test.jsp");
         }else if(cmd.equals("board")){
 
-            //resp.sendRedirect("board/joinform.jsp");
+            //resp.sendRedirect("board/joinForm.jsp");
 
             //프론트 컨트롤러 패턴.
             //라우팅 하는 역할을 담당하는( 앞단에서) 클래스를 만든 거에요. Controller.

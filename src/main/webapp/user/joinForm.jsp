@@ -23,7 +23,7 @@
 
     <div class="container">
         <h1>회원가입</h1>
-        <form method="post" action="/user?cmd=save">
+        <form method="post" action="/join">
             <div class="form-group">
                 <label>name:</label>
                 <input type="text" class="form-control" name="name">
@@ -38,7 +38,7 @@
     </div>
 
 
-    <a href="/user?cmd=loginForm">로그인 화면</a>
+    <a href="/loginForm">로그인 화면</a>
 
 </body>
 </html>

@@ -6,12 +6,80 @@ import servlet.domain.board.Board;
 import servlet.domain.board.BoardDao;
 import servlet.domain.board.dto.BoardReqDto;
 
+import java.io.File;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestClass {
+
+
+
+    @Test
+    public void classScanTest(){
+
+        List<Class> classes = componentScan();
+        System.out.println(classes);
+    }
+
+
+
+    public List<Class> componentScan(){
+
+        List<Class> controllerList = new ArrayList<>();
+
+        String packageName = "servlet.web";
+        String packageNameSlash = "./" + packageName.replace(".","/");
+
+        System.out.println("packageNameSlash" + packageNameSlash);
+
+        URL directoryUrl = Thread.currentThread().getContextClassLoader().getResource(packageNameSlash);
+        System.out.println("directoryUrl=>" + directoryUrl);
+
+        if (directoryUrl == null){
+            System.err.println("url resource를 얻지 못했습니다..");
+        }
+
+        String directoryString = directoryUrl.getFile();
+
+        if (directoryString == null){
+            System.err.println("url resource를 얻지 못했습니다..");
+        }
+
+        File dierctoryFile = new File(directoryString);
+
+
+        if (dierctoryFile.exists()){
+
+            String[] files = dierctoryFile.list();
+
+            for (String file : files) {
+
+                if (file.endsWith(".class")){
+                    System.out.println("class file check=>  " + file);
+                    file = file.replace(".class", "");
+
+                    try {
+                        Class<?> temp = Class.forName(packageName + "." + file);
+                        System.out.println(temp);
+                        controllerList.add(temp);
+
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }
+
+        }
+
+        return controllerList;
+    }
+
 
 
     @Test
