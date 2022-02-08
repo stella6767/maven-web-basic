@@ -28,6 +28,23 @@
     </dependency>
 
 
+    <!-- https://mvnrepository.com/artifact/cglib/cglib -->
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>3.3.0</version>
+    </dependency>
+
+
+    <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy-dep -->
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy-dep</artifactId>
+      <version>1.11.22</version>
+    </dependency>
+
+
+
     <!-- https://mvnrepository.com/artifact/jstl/jstl -->
     <dependency>
       <groupId>jstl</groupId>
