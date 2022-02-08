@@ -13,8 +13,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DispatcherServletFilter implements Filter {
 
@@ -42,7 +45,7 @@ public class DispatcherServletFilter implements Filter {
 
                 System.out.println(annotation);
 
-                if (annotation instanceof Controller){
+                if (annotation instanceof Controller) {
 
                     try {
                         Object controllerInstance = controller.getConstructor().newInstance();
@@ -54,70 +57,59 @@ public class DispatcherServletFilter implements Filter {
                             RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
                             //System.out.println("requestMapping " + requestMapping);
 
-                            if (requestMapping != null && requestMapping.uri().equals(endPoint) ){
+                            if (requestMapping != null && requestMapping.uri().equals(endPoint)) {
 
                                 System.out.println("uri " + requestMapping.uri());
                                 System.out.println("method " + method);
                                 System.out.println("리플렉션 컨트롤러 함수 어노테이션 값: " + requestMapping.uri());
 
 
-                                try {
+                                Parameter[] params = method.getParameters();
+                                String path;
 
-                                    Parameter[] params = method.getParameters();
-//                                for (Parameter param : params) {
-//                                    System.out.println("parame" + param);
-//                                }
-                                    String path;
+                                if (params.length > 0) {
+                                    //loginDto
 
-                                    if (params.length > 0){
-                                        //loginDto
-
-                                        Object parameInstance= null;
-
-                                        Object[] parameters = {null, null};
-
-                                        int i = 0;
-
-                                        for (Parameter param : params) {
-
-                                            if (param.getType().equals(HttpServletResponse.class)){
-                                                setData(resp, req);
-
-                                                //parameInstance= resp;
-
-                                                parameters[i] = resp;
-                                            }else{
-                                                parameInstance = param.getType().getConstructor(String.class, String.class)
+                                    Object[] objects = Arrays.stream(params).map((param) -> {
+                                        System.out.println("param" + param);
+                                        Object o = null;
+                                        if (param.getType().equals(HttpServletResponse.class)) {
+                                            setData(resp, req);
+                                            return resp;
+                                        } else if (param.getType().equals(HttpServletRequest.class)) {
+                                            setData(req, req);
+                                            return req;
+                                        } else {
+                                            try {
+                                                o = param.getType().getConstructor(String.class, String.class)
                                                         .newInstance(req.getParameter("name"), req.getParameter("password"));
-                                                System.out.println("parameInstance " + parameInstance);
+                                                System.out.println("parameInstance " + o);
+                                                setData(o, req);
 
-                                                setData(parameInstance, req);
-
-                                                parameters[i] = parameInstance;
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
                                             }
-                                            i++;
-
+                                            return o;
                                         }
-                                        path = (String) method.invoke(controllerInstance, parameters);
+                                    }).toArray();
 
-                                    }else {
-                                        path = (String) method.invoke(controllerInstance);
+                                    System.out.println("parame???" + objects);
+                                    path = (String) method.invoke(controllerInstance, objects);
 
-                                    }
+                                } else {
+                                    path = (String) method.invoke(controllerInstance);
 
-
-                                    System.out.println("path : " + path);
-                                    RequestDispatcher dis = req.getRequestDispatcher(path);
-                                    dis.forward(req, resp);
-                                    //requestDispatch는 필터를 다시 안탄다.!!!
-                                    //requestdispather는 내부에서 실행되므로 필터를 안 탄다.
-
-                                    break; // 더 이상 메서드를 리플렉션 할 필요 없어서 빠져나감.
-
-
-                                }catch (Exception e){
-                                    e.printStackTrace();
                                 }
+
+                                System.out.println("path : " + path);
+
+                                RequestDispatcher dis = req.getRequestDispatcher(path);
+                                dis.forward(req, resp);
+                                //requestDispatch는 필터를 다시 안탄다.!!!
+                                //requestdispather는 내부에서 실행되므로 필터를 안 탄다.
+
+
+                                break; // 더 이상 메서드를 리플렉션 할 필요 없어서 빠져나감.
 
 
                             }
@@ -150,18 +142,18 @@ public class DispatcherServletFilter implements Filter {
         // 파라미터의 key 값을 받아온 후 이를 변형 해줘야 한다.
         System.out.println("Instance Type : " + instance.getClass());
         Enumeration<String> keys = request.getParameterNames();
-        while(keys.hasMoreElements()) {
+        while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
             String methodKey = keyToMethodKey(key);
-            System.out.println("Setter Method : "  + methodKey);
+            System.out.println("Setter Method : " + methodKey);
 
             // 리플렉션을 이용해 변형된 key 값과 메소드를 비교할 수 있다.
             Method[] methods = instance.getClass().getDeclaredMethods();
             for (Method method : methods) {
-                if(method.getName().equals(methodKey)) {
+                if (method.getName().equals(methodKey)) {
                     try {
 
-                        System.out.println("???? " +request.getParameter(key));
+                        System.out.println("???? " + request.getParameter(key));
                         method.invoke(instance, request.getParameter(key));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -170,7 +162,6 @@ public class DispatcherServletFilter implements Filter {
             }
         }
     }
-
 
 
     public List<Class> componentScan() {
@@ -185,7 +176,7 @@ public class DispatcherServletFilter implements Filter {
         System.out.println("2  " + directoryURL);
 
         if (directoryURL == null) {
-            System.err.println("Could not retrive URL resource : "+ packageNameSlash);
+            System.err.println("Could not retrive URL resource : " + packageNameSlash);
         }
 
         String directoryString = directoryURL.getFile();
@@ -193,7 +184,7 @@ public class DispatcherServletFilter implements Filter {
         System.out.println("3  " + directoryString);
 
         if (directoryString == null) {
-            System.err.println("Could not find directory for URL resource : "+ packageNameSlash);
+            System.err.println("Could not find directory for URL resource : " + packageNameSlash);
         }
 
         File directory = new File(directoryString);

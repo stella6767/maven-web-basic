@@ -22,12 +22,11 @@ import java.sql.SQLException;
 public class UserController {
 
 
-//    @RequestMapping(uri = "/user/joinform")
-//    public String joinForm() {
-//
-//        return "user/joinform.jsp";
-//    }
+    @RequestMapping(uri = "/user")
+    public String joinForm() {
 
+        return "user/joinform.jsp";
+    }
 
     @RequestMapping(uri = "/user/join")
     public String join(LoginDto dto,HttpServletResponse response) throws IOException {
@@ -35,19 +34,40 @@ public class UserController {
         System.out.println(dto);
 
         System.out.println("!!!!1"  + response);
+
+        try {
+            new UserService().join(dto);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
         //Script.responseData(response, "성공응답!!");
+        return "loginForm.jsp";
+    }
+
+
+    @RequestMapping(uri = "/user/loginForm")
+    public String loginForm(){
 
         return "loginForm.jsp";
     }
 
 
+    @RequestMapping(uri = "/user/login")
+    public void login(LoginDto dto, HttpServletResponse resp) throws IOException {
+        System.out.println("login 함수 요청됨");
+        System.out.println(dto);
 
-//    @RequestMapping(uri = "/user/login")
-//    public String login(LoginDto dto) {
-//        System.out.println("login 함수 요청됨");
-//        System.out.println(dto);
-//        return "/";
-//    }
+        try {
+            User principal = new UserService().login(dto);
+            //req.setAttribute("principal", principal);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        //return "board/list.jsp";
+
+        Script.responseData(resp, "로그인 성공");
+    }
 
 
 
@@ -55,27 +75,25 @@ public class UserController {
 
     protected void doProcess(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException, SQLException, ClassNotFoundException {
 
-        UserService userService = new UserService();
-
-        String cmd = req.getParameter("cmd");
-        HttpSession session = req.getSession();
-
-        if (cmd == null){
-            resp.sendRedirect("user/joinform.jsp");
-        } else if(cmd.equals("login")){
-
-            User principal = userService.login(new LoginDto(req.getParameter("name"), req.getParameter("password")));
-
-            session.setAttribute("principal", principal);
-            resp.sendRedirect("board?cmd=list");
-        }else if(cmd.equals("save")){
-
-            userService.join(new LoginDto(req.getParameter("name"), req.getParameter("password")));
-            resp.sendRedirect("user/loginForm.jsp");
-        }else if(cmd.equals("loginForm")){
-
-            resp.sendRedirect("user/loginForm.jsp");
-        }
+//        String cmd = req.getParameter("cmd");
+//        HttpSession session = req.getSession();
+//
+//        if (cmd == null){
+//            resp.sendRedirect("user/joinform.jsp");
+//        } else if(cmd.equals("login")){
+//
+//            User principal = userService.login(new LoginDto(req.getParameter("name"), req.getParameter("password")));
+//
+//            session.setAttribute("principal", principal);
+//            resp.sendRedirect("board?cmd=list");
+//        }else if(cmd.equals("save")){
+//
+//            userService.join(new LoginDto(req.getParameter("name"), req.getParameter("password")));
+//            resp.sendRedirect("user/loginForm.jsp");
+//        }else if(cmd.equals("loginForm")){
+//
+//            resp.sendRedirect("user/loginForm.jsp");
+//        }
 
 
     }
