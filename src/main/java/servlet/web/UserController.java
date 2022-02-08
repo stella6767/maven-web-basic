@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
-//@WebServlet("/user")
+@WebServlet("/user")
 public class UserController extends HttpServlet {
 
 

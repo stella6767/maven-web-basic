@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
-//@WebServlet("/board")
+@WebServlet("/board")
 public class BoardController extends HttpServlet {
 
 
