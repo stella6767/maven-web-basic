@@ -53,24 +53,45 @@ public class UserController {
     }
 
 
+//    @RequestMapping(uri = "/user/login")
+//    public void login(LoginDto dto, HttpServletResponse resp) throws IOException {
+//        System.out.println("login 함수 요청됨");
+//        System.out.println(dto);
+//
+//        try {
+//            User principal = new UserService().login(dto);
+//            //req.setAttribute("principal", principal);
+//        } catch (SQLException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        //return "board/list.jsp";
+//
+//        Script.responseData(resp, "로그인 성공");
+//    }
+
+
     @RequestMapping(uri = "/user/login")
-    public void login(LoginDto dto, HttpServletResponse resp) throws IOException {
+    public String login(LoginDto dto, HttpServletRequest req) throws IOException {
         System.out.println("login 함수 요청됨");
         System.out.println(dto);
 
         try {
             User principal = new UserService().login(dto);
-            //req.setAttribute("principal", principal);
+            req.setAttribute("principal", principal);
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        //return "board/list.jsp";
 
-        Script.responseData(resp, "로그인 성공");
+
+        return "board/list";
     }
 
 
+    @RequestMapping(uri = "/board/list")
+    public String moveBoardList(){
 
+        return "board/list.jsp";
+    }
 
 
     protected void doProcess(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException, SQLException, ClassNotFoundException {
