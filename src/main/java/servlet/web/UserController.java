@@ -1,6 +1,7 @@
 package servlet.web;
 
 
+import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import servlet.config.anno.Controller;
 import servlet.config.anno.RequestMapping;
@@ -53,38 +54,43 @@ public class UserController {
     }
 
 
+    @RequestMapping(uri = "/user/login")
+    public void login(LoginDto dto, HttpServletResponse resp) throws IOException {
+        System.out.println("login 함수 요청됨");
+        System.out.println(dto);
+
+        Gson gson = new Gson();
+
+        String user = "";
+
+        try {
+            User principal = new UserService().login(dto);
+
+            user = gson.toJson(principal);
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Script.responseData(resp, user);
+    }
+
+
 //    @RequestMapping(uri = "/user/login")
-//    public void login(LoginDto dto, HttpServletResponse resp) throws IOException {
+//    public String login(LoginDto dto, HttpServletRequest req) throws IOException {
 //        System.out.println("login 함수 요청됨");
 //        System.out.println(dto);
 //
 //        try {
 //            User principal = new UserService().login(dto);
-//            //req.setAttribute("principal", principal);
+//            req.setAttribute("principal", principal);
 //        } catch (SQLException | ClassNotFoundException e) {
 //            e.printStackTrace();
 //        }
-//        //return "board/list.jsp";
 //
-//        Script.responseData(resp, "로그인 성공");
+//
+//        return "board/list";
 //    }
-
-
-    @RequestMapping(uri = "/user/login")
-    public String login(LoginDto dto, HttpServletRequest req) throws IOException {
-        System.out.println("login 함수 요청됨");
-        System.out.println(dto);
-
-        try {
-            User principal = new UserService().login(dto);
-            req.setAttribute("principal", principal);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-        return "board/list";
-    }
 
 
     @RequestMapping(uri = "/board/list")
