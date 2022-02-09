@@ -80,10 +80,10 @@ public class BoardController extends HttpServlet {
         BoardService boardService2 = ServiceFactory.boardService();
         String cmd = req.getParameter("cmd");
 
-        System.out.println("boardService1 :   "  + boardService);
-        System.out.println("boardService2 :   "  + boardService2);
-        System.out.println("같은 인스턴스인가??");
-        System.out.println(boardService2 == boardService);
+        //System.out.println("boardService1 :   "  + boardService);
+        //System.out.println("boardService2 :   "  + boardService2);
+        //System.out.println("같은 인스턴스인가??");
+        //System.out.println(boardService2 == boardService);
 
         //하나의 클래스는 하나의 책임만. SRP
         //하나의 클래스나, 메서드에서 모든 로직을 처리하다보면, 재앙.

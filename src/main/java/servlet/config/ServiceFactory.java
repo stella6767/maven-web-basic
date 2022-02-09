@@ -19,21 +19,24 @@ public class ServiceFactory {
 
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(BoardService.class);
-//        enhancer.setCallback(new InvocationHandler() {
-//            final BoardService boardService = new BoardService();
-//            @Override
-//            public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
-//
-//                long startTime = System.nanoTime();
-//
-//                System.out.println("method: " + boardService);
-//                Object invoke = method.invoke(boardService, objects);
-//                long endtime = System.nanoTime();
-//                long elapsedTime = startTime - endtime;
-//                System.out.println(elapsedTime + " ns");
-//                return invoke;
-//            }
-//        });
+        enhancer.setCallback(new InvocationHandler() {
+            final BoardService boardService = new BoardService();
+            @Override
+            public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
+
+                long startTime = System.currentTimeMillis();
+
+                System.out.println("method: " + boardService);
+                Object invoke = method.invoke(boardService, objects);
+
+                Thread.sleep(5000);
+
+                long endtime = System.currentTimeMillis();
+                long totalTime = endtime - startTime;
+                System.out.println("실행 시간 " + totalTime/1000);
+                return invoke;
+            }
+        });
 
 
  //       enhancer.setCallback(new );

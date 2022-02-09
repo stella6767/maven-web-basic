@@ -5,9 +5,9 @@ import java.sql.*;
 public class MConnectionMaker implements ConnectionMaker{
 
     String driverName="com.mysql.jdbc.Driver";
-    String url = "jdbc:mysql://localhost:3306/test?serverTimezone=Asia/Seoul";
-    String id = "test"; // MySQL ID
-    String pwd ="1234";     // MYSQL Password
+    String url = "jdbc:mysql://localhost:3306/servlet?serverTimezone=Asia/Seoul";
+    String id = "servlet"; // MySQL ID
+    String pwd ="Kang@1234";     // MYSQL Password
     Connection conn = null;
 
     @Override
