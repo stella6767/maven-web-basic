@@ -1,12 +1,16 @@
 package servlet.test;
 
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.InvocationHandler;
 import org.testng.annotations.Test;
 import servlet.config.MConnectionMaker;
 import servlet.domain.board.Board;
 import servlet.domain.board.BoardDao;
 import servlet.domain.board.dto.BoardReqDto;
+import servlet.service.BoardService;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,6 +20,39 @@ import java.util.List;
 
 public class TestClass {
 
+
+    @Test
+    public void 부가기능테스트() throws SQLException, ClassNotFoundException {
+
+//        long startTime = System.nanoTime();
+//        new BoardService().save("test", "1234" );
+//        long endtime = System.nanoTime();
+//        long elapsedTime = startTime - endtime;
+//        System.out.println(elapsedTime + " ns");
+
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(BoardService.class);
+        enhancer.setCallback(new InvocationHandler() {
+            final BoardService boardService = new BoardService();
+            @Override
+            public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
+
+                long startTime = System.nanoTime();
+
+                //System.out.println("????" + method);
+                Object invoke = method.invoke(boardService, objects);
+                long endtime = System.nanoTime();
+                long elapsedTime = startTime - endtime;
+                System.out.println(elapsedTime + " ns");
+                return invoke;
+            }
+        });
+
+
+        BoardService boardService = (BoardService) enhancer.create();
+        boardService.save("test2", "1234");
+
+    }
 
 
     @Test

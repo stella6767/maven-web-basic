@@ -1,6 +1,8 @@
 package servlet.web;
 
 import lombok.SneakyThrows;
+import servlet.config.ServiceFactory;
+import servlet.config.anno.StopWatch;
 import servlet.domain.user.User;
 import servlet.service.BoardService;
 import servlet.service.UserService;
@@ -16,7 +18,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
-//@WebServlet("/board")
+@WebServlet("/board")
 public class BoardController extends HttpServlet {
 
     /**
@@ -74,9 +76,14 @@ public class BoardController extends HttpServlet {
 
     protected void doProcess(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException, SQLException, ClassNotFoundException {
 
-        BoardService boardService = new BoardService();
+        BoardService boardService = ServiceFactory.boardService();
+        BoardService boardService2 = ServiceFactory.boardService();
         String cmd = req.getParameter("cmd");
 
+        System.out.println("boardService1 :   "  + boardService);
+        System.out.println("boardService2 :   "  + boardService2);
+        System.out.println("같은 인스턴스인가??");
+        System.out.println(boardService2 == boardService);
 
         //하나의 클래스는 하나의 책임만. SRP
         //하나의 클래스나, 메서드에서 모든 로직을 처리하다보면, 재앙.
@@ -89,11 +96,17 @@ public class BoardController extends HttpServlet {
             resp.sendRedirect("board/detail.jsp");
 
         }else if (cmd.equals("save")){
+
+//            long startTime = System.nanoTime();
+//            boardService.save(req.getParameter("title"), req.getParameter("content") );
+//            long endtime = System.nanoTime();
+//            long elapsedTime = startTime - endtime;
+//            System.out.println(elapsedTime + " ns");
+
             boardService.save(req.getParameter("title"), req.getParameter("content") );
             resp.sendRedirect("/board?cmd=list");
 
         }else if (cmd.equals("list")){
-
 
             req.setAttribute("boards",boardService.findAll());
             RequestDispatcher rd = req.getRequestDispatcher("board/list.jsp");
