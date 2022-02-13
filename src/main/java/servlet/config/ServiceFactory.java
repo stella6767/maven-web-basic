@@ -3,12 +3,14 @@ package servlet.config;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.InvocationHandler;
 import servlet.service.BoardService;
+import servlet.service.UserService;
 
 import java.lang.reflect.Method;
 
 public class ServiceFactory {
 
     static BoardService boardService;
+    static UserService userService;
 
     public static BoardService boardService(){
 
@@ -33,6 +35,15 @@ public class ServiceFactory {
         }
 
         return boardService;
+    }
+
+    public static UserService userService(){
+
+        if (userService == null){
+            userService = new UserService();
+        }
+
+        return userService;
     }
 
 }

@@ -83,7 +83,15 @@ public class DispatherFilter implements Filter {
 
                                     }).toArray();
 
-                                    path= (String) method.invoke(controllerInstance, objects);
+
+                                    Object returnData = method.invoke(controllerInstance, objects);
+
+                                    if (returnData instanceof String){
+                                        path= (String) method.invoke(controllerInstance, objects);
+                                    }else {
+                                        req.setAttribute("data", returnData);
+                                    }
+
                                 }else{
                                     path= (String) method.invoke(controllerInstance);
                                 }

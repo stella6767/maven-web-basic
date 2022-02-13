@@ -3,6 +3,7 @@ package servlet.web;
 
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
+import servlet.config.ServiceFactory;
 import servlet.config.anno.Controller;
 import servlet.config.anno.RequestMapping;
 import servlet.domain.user.User;
@@ -32,8 +33,7 @@ public class UserController {
      *
      */
 
-    UserService userService = new UserService();
-
+    UserService userService = ServiceFactory.userService();
 
     @RequestMapping(uri = "/user")
     public String joinForm(){
@@ -74,34 +74,4 @@ public class UserController {
     }
 
 
-
-
-//
-//    protected void doProcess(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException, SQLException, ClassNotFoundException {
-//
-//        UserService userService = new UserService();
-//
-//        String cmd = req.getParameter("cmd");
-//        HttpSession session = req.getSession();
-//
-//        Gson gson = new Gson();
-//
-//        if (cmd == null){
-//            resp.sendRedirect("user/joinForm.jsp");
-//        } else if(cmd.equals("login")){
-//
-//            User principal = userService.login(new LoginDto(req.getParameter("name"), req.getParameter("password")));
-//            Script.responseData(resp, gson.toJson(principal));
-//
-//        }else if(cmd.equals("save")){
-//
-//            userService.join(new LoginDto(req.getParameter("name"), req.getParameter("password")));
-//            resp.sendRedirect("user/loginForm.jsp");
-//        }else if(cmd.equals("loginForm")){
-//
-//            resp.sendRedirect("user/loginForm.jsp");
-//        }
-//
-//
-//    }
 }
