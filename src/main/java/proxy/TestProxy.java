@@ -5,6 +5,7 @@ import net.bytebuddy.implementation.InvocationHandlerAdapter;
 import net.bytebuddy.matcher.ElementMatchers;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.InvocationHandler;
+
 import org.testng.annotations.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -33,11 +34,11 @@ public class TestProxy {
 //            final Animal animal = new Dog();
 //
 //            @Override
-//            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+//            public Object invoke(Object servlet.proxy, Method method, Object[] args) throws Throwable {
 //
-//                System.out.println("dynamic proxy start");
+//                System.out.println("dynamic servlet.proxy start");
 //                method.invoke(animal, args);
-//                System.out.println("dynamic proxy end");
+//                System.out.println("dynamic servlet.proxy end");
 //
 //                return null;
 //            }
@@ -46,6 +47,8 @@ public class TestProxy {
 //        dog.bark();
 
     }
+
+
 
 
 
@@ -60,10 +63,10 @@ public class TestProxy {
             public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
 
                 Dog dog = new Dog();
-                System.out.println("cglib proxy start");
+                System.out.println("cglib servlet.proxy start");
                 Object invoke = method.invoke(dog);
                 System.out.println(dog.retrunName());
-                System.out.println("cglib proxy end");
+                System.out.println("cglib servlet.proxy end");
 
                 return invoke;
             }
@@ -86,31 +89,31 @@ public class TestProxy {
     }
 
 
-    @Test
-    public void byteBuddyProxyTest() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-
-        Class<? extends Dog> dogProxy = new ByteBuddy().subclass(Dog.class)
-                .method(named("bark"))
-                .intercept(InvocationHandlerAdapter.of(new java.lang.reflect.InvocationHandler() {
-
-                    final Dog dog = new Dog();
-
-                    @Override
-                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        System.out.println("byteBuddy Dynamic proxy start");
-                        Object invoke = method.invoke(dog);
-                        System.out.println("byteBuddy Dynamic proxy end");
-                        return invoke;
-                    }
-                }))
-                .make()
-                .load(Dog.class.getClassLoader())
-                .getLoaded();
-
-        Dog dog = dogProxy.getConstructor().newInstance();
-
-        dog.bark();
-    }
+//    @Test
+//    public void byteBuddyProxyTest() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+//
+//        Class<? extends Dog> dogProxy = new ByteBuddy().subclass(Dog.class)
+//                .method(named("bark"))
+//                .intercept(InvocationHandlerAdapter.of(new java.lang.reflect.InvocationHandler() {
+//
+//                    final Dog dog = new Dog();
+//
+//                    @Override
+//                    public Object invoke(Object servlet.proxy, Method method, Object[] args) throws Throwable {
+//                        System.out.println("byteBuddy Dynamic servlet.proxy start");
+//                        Object invoke = method.invoke(dog);
+//                        System.out.println("byteBuddy Dynamic servlet.proxy end");
+//                        return invoke;
+//                    }
+//                }))
+//                .make()
+//                .load(Dog.class.getClassLoader())
+//                .getLoaded();
+//
+//        Dog dog = dogProxy.getConstructor().newInstance();
+//
+//        dog.bark();
+//    }
 
 
 
@@ -151,9 +154,9 @@ public class TestProxy {
 //        @Override
 //        public void bark() {
 //
-//            System.out.println("proxy object start");
+//            System.out.println("servlet.proxy object start");
 //            dog.bark();
-//            System.out.println("proxy object end");
+//            System.out.println("servlet.proxy object end");
 //
 //        }
 //    }

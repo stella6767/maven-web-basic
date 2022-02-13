@@ -16,8 +16,6 @@ public class BoardService {
 
     private BoardDao boardDao;
 
-    Gson gson = new Gson();
-
     public BoardService() {
         boardDao = new DaoFactory().boardDao();
     }
@@ -35,7 +33,7 @@ public class BoardService {
 
 
     public String ajaxSaveAndFindAll(HttpServletRequest req) throws SQLException, ClassNotFoundException, IOException {
-
+        Gson gson = new Gson();
         String jsonBody = Script.getBody(req);
         System.out.println("jsonBody=>" + jsonBody);
         BoardReqDto dto = gson.fromJson(jsonBody, BoardReqDto.class);

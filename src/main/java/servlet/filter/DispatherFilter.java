@@ -15,6 +15,7 @@ import java.lang.reflect.Parameter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 public class DispatherFilter implements Filter {
@@ -68,11 +69,12 @@ public class DispatherFilter implements Filter {
                                         Object dtoInstance = null;
 
                                         if (parameter.getType().equals(HttpServletResponse.class)) {
+
                                             return resp;
                                         } else {
-
                                             try {
-                                                dtoInstance = parameter.getType().getConstructor(String.class, String.class).newInstance(req.getParameter("name"), req.getParameter("password"));
+                                                dtoInstance = parameter.getType().getConstructor().newInstance();
+                                                setData(dtoInstance, req);
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
@@ -107,6 +109,40 @@ public class DispatherFilter implements Filter {
 
 
     }
+
+
+    private <T> void setData(T instance, HttpServletRequest request) {
+        // 파라미터의 key 값을 받아온 후 이를 변형 해줘야 한다.
+        System.out.println("Instance Type : " + instance.getClass());
+        Enumeration<String> keys = request.getParameterNames();
+        while(keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            String methodKey = keyToMethodKey(key);
+            System.out.println("Setter Method : "  + methodKey);
+
+            // 리플렉션을 이용해 변형된 key 값과 메소드를 비교할 수 있다.
+            Method[] methods = instance.getClass().getDeclaredMethods();
+            for (Method method : methods) {
+                if(method.getName().equals(methodKey)) {
+                    try {
+                        method.invoke(instance, request.getParameter(key));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    private String keyToMethodKey(String key) {
+        // username => setUsername, password => setPassword ...
+        String firstKey = "set";
+        String upperKey = key.substring(0, 1).toUpperCase();
+        String remainKey = key.substring(1);
+
+        return firstKey + upperKey + remainKey;
+    }
+
 
     protected List<Class> componentScan() {
 

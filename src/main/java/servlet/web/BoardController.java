@@ -1,9 +1,10 @@
 package servlet.web;
 
 import lombok.SneakyThrows;
-import servlet.domain.user.User;
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.InvocationHandler;
+import servlet.config.ServiceFactory;
 import servlet.service.BoardService;
-import servlet.service.UserService;
 import servlet.utills.Script;
 
 import javax.servlet.RequestDispatcher;
@@ -12,11 +13,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 
-//@WebServlet("/board")
+@WebServlet("/board")
 public class BoardController extends HttpServlet {
 
     /**
@@ -74,14 +75,23 @@ public class BoardController extends HttpServlet {
 
     protected void doProcess(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException, SQLException, ClassNotFoundException {
 
-        BoardService boardService = new BoardService();
-        String cmd = req.getParameter("cmd");
 
+        BoardService boardService = ServiceFactory.boardService();
+        BoardService boardService2 = ServiceFactory.boardService();
+
+        System.out.println("boardService=>" + boardService);
+        System.out.println("boardService2=>" + boardService2);
+        System.out.println("같은 인스턴스인가?");
+        System.out.println(boardService == boardService2);
+
+        String cmd = req.getParameter("cmd");
 
         //하나의 클래스는 하나의 책임만. SRP
         //하나의 클래스나, 메서드에서 모든 로직을 처리하다보면, 재앙.
         //본인이 어떤 클래스나 메서드가 방대해진다.
 
+
+        //참고로 말하자면, 핵심 비즈니스 로직이 아닌, 횡단 관심사.
 
         if (cmd == null){
 
@@ -89,20 +99,25 @@ public class BoardController extends HttpServlet {
             resp.sendRedirect("board/detail.jsp");
 
         }else if (cmd.equals("save")){
+
             boardService.save(req.getParameter("title"), req.getParameter("content") );
+
             resp.sendRedirect("/board?cmd=list");
 
         }else if (cmd.equals("list")){
-
-
             req.setAttribute("boards",boardService.findAll());
             RequestDispatcher rd = req.getRequestDispatcher("board/list.jsp");
             rd.forward(req,resp);
 
         }else if (cmd.equals("ajaxSave")){
+
+
             Script.responseData(resp, boardService.ajaxSaveAndFindAll(req));
+
         }
 
 
     }
+
+
 }
