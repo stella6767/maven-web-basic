@@ -23,7 +23,7 @@
 
     <div class="container">
         <h1>게시글 등록</h1>
-        <form method="post" action="/board?cmd=save">
+        <form method="post" action="/save">
             <div class="form-group">
                 <label>Title:</label>
                 <input type="text" class="form-control" name="title">
@@ -43,7 +43,7 @@
     <div class="board-box"></div>
 
 
-    <a href="/board?cmd=list">게시글 리스트</a>
+    <a href="/findAll">게시글 리스트</a>
 
 
 <script src="/js/board.js"></script>

@@ -1,5 +1,6 @@
 package servlet.filter;
 
+import servlet.config.ControllerFactory;
 import servlet.config.anno.Controller;
 import servlet.config.anno.RequestMapping;
 
@@ -47,8 +48,9 @@ public class DispatherFilter implements Filter {
                 if (annotation instanceof Controller) {
 
                     try {
-                        Object controllerInstance = controller.getConstructor().newInstance();
-                        //System.out.println(controllerInstance);
+                        //Object controllerInstance = controller.getConstructor().newInstance();
+                        Object controllerInstance = ControllerFactory.createController(controller);
+                        System.out.println(controllerInstance);
                         Method[] methods = controller.getDeclaredMethods();
 
                         for (Method method : methods) {
@@ -71,7 +73,10 @@ public class DispatherFilter implements Filter {
                                         if (parameter.getType().equals(HttpServletResponse.class)) {
 
                                             return resp;
-                                        } else {
+                                        }else if (parameter.getType().equals(HttpServletRequest.class)){
+                                            return req;
+                                        }
+                                        else {
                                             try {
                                                 dtoInstance = parameter.getType().getConstructor().newInstance();
                                                 setData(dtoInstance, req);
@@ -84,16 +89,11 @@ public class DispatherFilter implements Filter {
                                     }).toArray();
 
 
-                                    Object returnData = method.invoke(controllerInstance, objects);
+                                    path = (String) method.invoke(controllerInstance, objects);
 
-                                    if (returnData instanceof String){
-                                        path= (String) method.invoke(controllerInstance, objects);
-                                    }else {
-                                        req.setAttribute("data", returnData);
-                                    }
 
-                                }else{
-                                    path= (String) method.invoke(controllerInstance);
+                                } else {
+                                    path = (String) method.invoke(controllerInstance);
                                 }
 
                                 System.out.println("path=>" + path);
@@ -123,15 +123,15 @@ public class DispatherFilter implements Filter {
         // 파라미터의 key 값을 받아온 후 이를 변형 해줘야 한다.
         System.out.println("Instance Type : " + instance.getClass());
         Enumeration<String> keys = request.getParameterNames();
-        while(keys.hasMoreElements()) {
+        while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
             String methodKey = keyToMethodKey(key);
-            System.out.println("Setter Method : "  + methodKey);
+            System.out.println("Setter Method : " + methodKey);
 
             // 리플렉션을 이용해 변형된 key 값과 메소드를 비교할 수 있다.
             Method[] methods = instance.getClass().getDeclaredMethods();
             for (Method method : methods) {
-                if(method.getName().equals(methodKey)) {
+                if (method.getName().equals(methodKey)) {
                     try {
                         method.invoke(instance, request.getParameter(key));
                     } catch (Exception e) {

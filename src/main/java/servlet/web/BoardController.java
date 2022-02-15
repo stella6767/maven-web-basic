@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.InvocationHandler;
 import servlet.config.ServiceFactory;
+import servlet.config.anno.Controller;
 import servlet.config.anno.RequestMapping;
 import servlet.domain.board.Board;
 import servlet.domain.board.dto.BoardReqDto;
@@ -21,9 +22,8 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet("/board")
+@Controller
 public class BoardController {
-
 
     private BoardService boardService = ServiceFactory.boardService();
 
@@ -48,11 +48,15 @@ public class BoardController {
 
 
     @RequestMapping(uri = "/findAll")
-    public List<Board> findAll() throws SQLException, ClassNotFoundException {
+    public String findAll(HttpServletRequest req) throws SQLException, ClassNotFoundException {
 
         System.out.println("게시글 리스트");
 
-        return boardService.findAll();
+        req.setAttribute("boards",
+                boardService.findAll());
+
+
+        return "board/list.jsp";
     }
 
 
